@@ -79,7 +79,7 @@
             font-size: 3rem;
             color: white;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            animation: float 3s ease-in-out infinite;
+            
         }
 
         @keyframes float {
@@ -114,7 +114,7 @@
         }
 
         .level-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(#191970);
             color: white;
             padding: 25px;
             border-radius: 15px;
@@ -372,6 +372,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
+      
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -393,7 +394,8 @@
             pointer-events: none;
         }
 
-    
+        .professor-molekul:hover .tooltip {
+            opacity: 1;
         }
 
         @media (max-width: 768px) {
@@ -441,7 +443,7 @@
             <div class="level-selection">
                 <button class="level-card" onclick="startLevel(1)">
                     <div class="level-number">Level 1</div>
-                    <div class="level-title">🔬 Ruang Tumbukan Sempurna</div>
+                    <div class="level-title">Karakteristik Gas Ideal</div>
                     <div class="level-desc">
                         Pelajari sifat-sifat dasar Gas Ideal dan simulasikan pergerakan molekul gas dalam wadah tertutup.
                     </div>
@@ -449,7 +451,7 @@
 
                 <button class="level-card" onclick="startLevel(2)">
                     <div class="level-number">Level 2</div>
-                    <div class="level-title">⚙️ Laboratorium Hukum Abadi</div>
+                    <div class="level-title">Hukum-Hukum Gas Ideal</div>
                     <div class="level-desc">
                         Perbaiki 4 mesin yang rusak dengan menerapkan Hukum Boyle, Charles, Gay-Lussac, dan Avogadro.
                     </div>
@@ -457,7 +459,7 @@
 
                 <button class="level-card" onclick="startLevel(3)">
                     <div class="level-number">Level 3</div>
-                    <div class="level-title">🧮 Persamaan Master</div>
+                    <div class="level-title">Persamaan Umum Gas Ideal</div>
                     <div class="level-desc">
                         Integrasikan semua hukum menjadi Persamaan Gas Ideal (PV = nRT) dan selesaikan tantangan akhir!
                     </div>
@@ -474,7 +476,7 @@
                 </div>
             </div>
 
-            <h2>🔬 Level 1: Ruang Tumbukan Sempurna</h2>
+            <h2>Level 1: Karakteristik Gas Ideal</h2>
             <p>Selamat datang di Negeri Kinetik! Bantu Made memahami sifat-sifat Gas Ideal dengan mengamati simulasi molekul gas.</p>
 
             <div class="simulation-area">
@@ -530,7 +532,7 @@
                 </div>
             </div>
 
-            <h2>⚙️ Level 2: Laboratorium Hukum Abadi</h2>
+            <h2>Level 2: Hukum-Hukum Gas Ideal</h2>
             <p>Empat mesin di laboratorium rusak! Bantu Made memperbaikinya dengan menerapkan hukum-hukum gas yang benar.</p>
 
             <div class="simulation-area">
@@ -586,7 +588,7 @@
                 </div>
             </div>
 
-            <h2>🧮 Level 3: Persamaan Master</h2>
+            <h2>Level 3: Persamaan Umum Gas Ideal</h2>
             <p>Saatnya mengintegrasikan semua hukum menjadi Persamaan Gas Ideal! Bantu Made menyelesaikan tantangan terakhir.</p>
 
             <div class="simulation-area">
@@ -637,6 +639,12 @@
                 <div id="result3" class="result-message" style="display: none;"></div>
             </div>
         </div>
+    </div>
+
+    <!-- Professor Molekul Helper -->
+    <div class="professor-molekul" onclick="showHint()">
+        🔬
+        <div class="tooltip">Prof. Molekul - Klik untuk bantuan!</div>
     </div>
 
     <script>
@@ -775,7 +783,17 @@
             backToMenu();
         }
 
-      
+        function showHint() {
+            const hints = [
+                'Selamat datang di Negeri Kinetik! Aku Prof. Molekul, pembimbingmu.',
+                'Level 1: Perhatikan bagaimana partikel gas bergerak secara acak dan tidak saling tarik-menarik.',
+                'Level 2: Ingat, jika tekanan naik maka volume turun (berbanding terbalik).',
+                'Level 3: Gunakan rumus PV = nRT dengan R = 0.082 L·atm/(mol·K).'
+            ];
+            
+            alert(hints[currentLevel] || hints[0]);
+        }
+
         // Initialize first simulation when page loads
         window.onload = function() {
             // Page is ready
