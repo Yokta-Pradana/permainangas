@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetik Quest: Misteri Gas di Balik Kaca</title>
+    <style>
+       body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* --- Properti Kualitas Gambar Background --- */
+    background-image: url('https://iili.io/K192FdQ.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    
+    /* Paling PENTING untuk mengatasi gambar pecah/terulang */
+    background-size: cover; 
+    
+    /* Opsional: Membuat gambar diam dan mulus saat scrolling */
+    background-attachment: fixed;
+    /* ------------------------------------------ */
+    
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-menu {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .character-intro {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .made-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .character-info {
+            flex: 1;
+            min-width: 300px;
+            text-align: left;
+        }
+
+        .character-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .character-desc {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .level-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: left;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .level-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .level-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .level-desc {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .game-screen {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            flex: 1;
+            max-width: 300px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .simulation-area {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px dashed #ddd;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .gas-container {
+            width: 200px;
+            height: 200px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            position: relative;
+            background: rgba(173, 216, 230, 0.3);
+            overflow: hidden;
+        }
+
+        .gas-particle {
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            animation: moveParticle 2s linear infinite;
+        }
+
+        @keyframes moveParticle {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(150px, 50px); }
+            50% { transform: translate(100px, 150px); }
+            75% { transform: translate(50px, 100px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .control-group {
+            text-align: center;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .control-input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .control-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #1976D2;
+            transform: scale(1.05);
+        }
+
+        .formula-display {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .formula {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1976D2;
+            text-align: center;
+        }
+
+        .quiz-section {
+            background: #fff3e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .quiz-question {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #2196F3;
+            background: #f0f8ff;
+        }
+
+        .quiz-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .result-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 2px solid #4CAF50;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #f44336;
+        }
+
+        .next-level-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .next-level-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .professor-molekul {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #64b5f6, #1976d2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+            z-index: 1000;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .professor-molekul:hover .tooltip {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .character-intro {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .character-info {
+                text-align: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="game-title">Petualangan Gas Ideal</h1>
+            <p class="subtitle">Telusuri Sifat-Sifat Gas Ideal</p>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="mainMenu" class="main-menu">
+            <div class="character-intro">
+                <div class="made-avatar"><img src="https://iili.io/K0yOFHX.png"></div>
+                <div class="character-info">
+                    <h2 class="character-name">Made</h2>
+                    <p class="character-desc">
+                        Siswa SMA yang cerdas dan penasaran. Setelah mengaktifkan perangkat misterius di laboratorium, 
+                        Made tersedot ke dalam <strong>Negeri Kinetik</strong> dan harus mengumpulkan partikel energi 
+                        dengan memecahkan teka-teki Gas Ideal untuk kembali ke dunianya!
+                    </p>
+                </div>
+            </div>
+
+            <div class="level-selection">
+                <button class="level-card" onclick="startLevel(1)">
+                    <div class="level-number">Level 1</div>
+                    <div class="level-title">🔬 Ruang Tumbukan Sempurna</div>
+                    <div class="level-desc">
+                        Pelajari sifat-sifat dasar Gas Ideal dan simulasikan pergerakan molekul gas dalam wadah tertutup.
+                    </div>
+                </button>
+
+                <button class="level-card" onclick="startLevel(2)">
+                    <div class="level-number">Level 2</div>
+                    <div class="level-title">⚙️ Laboratorium Hukum Abadi</div>
+                    <div class="level-desc">
+                        Perbaiki 4 mesin yang rusak dengan menerapkan Hukum Boyle, Charles, Gay-Lussac, dan Avogadro.
+                    </div>
+                </button>
+
+                <button class="level-card" onclick="startLevel(3)">
+                    <div class="level-number">Level 3</div>
+                    <div class="level-title">🧮 Persamaan Master</div>
+                    <div class="level-desc">
+                        Integrasikan semua hukum menjadi Persamaan Gas Ideal (PV = nRT) dan selesaikan tantangan akhir!
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Level 1: Gas Properties -->
+        <div id="level1" class="game-screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="backToMenu()">← Kembali</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress1"></div>
+                </div>
+            </div>
+
+            <h2>🔬 Level 1: Ruang Tumbukan Sempurna</h2>
+            <p>Selamat datang di Negeri Kinetik! Bantu Made memahami sifat-sifat Gas Ideal dengan mengamati simulasi molekul gas.</p>
+
+            <div class="simulation-area">
+                <h3>Simulasi Molekul Gas Ideal</h3>
+                <div class="gas-container" id="gasContainer1">
+                    <!-- Particles will be added dynamically -->
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">Suhu (K)</label>
+                        <input type="number" class="control-input" id="temperature1" value="300" min="100" max="500">
+                        <button class="control-btn" onclick="updateSimulation(1)">Update</button>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Jumlah Partikel</label>
+                        <input type="number" class="control-input" id="particles1" value="8" min="4" max="12">
+                        <button class="control-btn" onclick="updateSimulation(1)">Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-display">
+                <div class="formula">Sifat Gas Ideal: Partikel bergerak acak, tidak ada gaya tarik-menarik, tumbukan lenting sempurna</div>
+            </div>
+
+            <div class="quiz-section">
+                <div class="quiz-question">Manakah yang BUKAN sifat Gas Ideal?</div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(1, this, false)">
+                        A. Partikel bergerak secara acak dan terus-menerus
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(1, this, false)">
+                        B. Volume molekul diabaikan dibanding volume wadah
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(1, this, true)">
+                        C. Ada gaya tarik-menarik yang kuat antar molekul
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(1, this, false)">
+                        D. Tumbukan antar molekul bersifat lenting sempurna
+                    </div>
+                </div>
+                <div id="result1" class="result-message" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Level 2: Gas Laws -->
+        <div id="level2" class="game-screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="backToMenu()">← Kembali</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress2"></div>
+                </div>
+            </div>
+
+            <h2>⚙️ Level 2: Laboratorium Hukum Abadi</h2>
+            <p>Empat mesin di laboratorium rusak! Bantu Made memperbaikinya dengan menerapkan hukum-hukum gas yang benar.</p>
+
+            <div class="simulation-area">
+                <h3>Mesin Hukum Boyle (P × V = konstan)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">Tekanan Awal (atm)</label>
+                        <input type="number" class="control-input" id="p1" value="2" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Volume Awal (L)</label>
+                        <input type="number" class="control-input" id="v1" value="4" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Volume Akhir (L)</label>
+                        <input type="number" class="control-input" id="v2" value="2" step="0.1">
+                    </div>
+                    <button class="control-btn" onclick="calculateBoyle()">Hitung P₂</button>
+                </div>
+                <div id="boyleResult" style="margin-top: 15px; font-weight: bold;"></div>
+            </div>
+
+            <div class="formula-display">
+                <div class="formula">Hukum Boyle: P₁V₁ = P₂V₂ (pada suhu konstan)</div>
+            </div>
+
+            <div class="quiz-section">
+                <div class="quiz-question">Jika tekanan gas dinaikkan 2 kali lipat pada suhu konstan, maka volume gas akan:</div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(2, this, false)">
+                        A. Naik 2 kali lipat
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(2, this, true)">
+                        B. Turun menjadi setengahnya
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(2, this, false)">
+                        C. Tetap sama
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(2, this, false)">
+                        D. Naik 4 kali lipat
+                    </div>
+                </div>
+                <div id="result2" class="result-message" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Level 3: Ideal Gas Equation -->
+        <div id="level3" class="game-screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="backToMenu()">← Kembali</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress3"></div>
+                </div>
+            </div>
+
+            <h2>🧮 Level 3: Persamaan Master</h2>
+            <p>Saatnya mengintegrasikan semua hukum menjadi Persamaan Gas Ideal! Bantu Made menyelesaikan tantangan terakhir.</p>
+
+            <div class="simulation-area">
+                <h3>Kalkulator Persamaan Gas Ideal: PV = nRT</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">Tekanan (atm)</label>
+                        <input type="number" class="control-input" id="pressure" value="1" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Volume (L)</label>
+                        <input type="number" class="control-input" id="volume" value="22.4" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Mol (n)</label>
+                        <input type="number" class="control-input" id="moles" value="1" step="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Suhu (K)</label>
+                        <input type="number" class="control-input" id="temp" value="" step="0.1">
+                    </div>
+                    <button class="control-btn" onclick="calculateIdealGas()">Hitung Suhu</button>
+                </div>
+                <div id="idealGasResult" style="margin-top: 15px; font-weight: bold;"></div>
+            </div>
+
+            <div class="formula-display">
+                <div class="formula">Persamaan Gas Ideal: PV = nRT<br>
+                <small>R = 0.082 L·atm/(mol·K)</small></div>
+            </div>
+
+            <div class="quiz-section">
+                <div class="quiz-question">Berapa suhu gas ideal jika P = 2 atm, V = 11.2 L, n = 1 mol?</div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(3, this, false)">
+                        A. 200 K
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(3, this, false)">
+                        B. 250 K
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(3, this, true)">
+                        C. 273 K
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(3, this, false)">
+                        D. 300 K
+                    </div>
+                </div>
+                <div id="result3" class="result-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professor Molekul Helper -->
+    <div class="professor-molekul" onclick="showHint()">
+        🔬
+        <div class="tooltip">Prof. Molekul - Klik untuk bantuan!</div>
+    </div>
+
+    <script>
+        let currentLevel = 0;
+        let levelProgress = [0, 0, 0];
+        let completedQuestions = [false, false, false];
+
+        function startLevel(level) {
+            currentLevel = level;
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById(`level${level}`).style.display = 'block';
+            
+            if (level === 1) {
+                initializeGasSimulation();
+            }
+            
+            updateProgress(level, 25);
+        }
+
+        function backToMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById('mainMenu').style.display = 'block';
+            currentLevel = 0;
+        }
+
+        function updateProgress(level, progress) {
+            levelProgress[level - 1] = progress;
+            document.getElementById(`progress${level}`).style.width = progress + '%';
+        }
+
+        function initializeGasSimulation() {
+            const container = document.getElementById('gasContainer1');
+            container.innerHTML = '';
+            
+            const numParticles = parseInt(document.getElementById('particles1').value);
+            
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'gas-particle';
+                particle.style.left = Math.random() * 180 + 'px';
+                particle.style.top = Math.random() * 180 + 'px';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function updateSimulation(level) {
+            if (level === 1) {
+                initializeGasSimulation();
+                const temp = parseInt(document.getElementById('temperature1').value);
+                const particles = document.querySelectorAll('.gas-particle');
+                
+                particles.forEach(particle => {
+                    const speed = temp / 150; // Scale animation speed with temperature
+                    particle.style.animationDuration = (2 / speed) + 's';
+                });
+                
+                updateProgress(1, 50);
+            }
+        }
+
+        function calculateBoyle() {
+            const p1 = parseFloat(document.getElementById('p1').value);
+            const v1 = parseFloat(document.getElementById('v1').value);
+            const v2 = parseFloat(document.getElementById('v2').value);
+            
+            const p2 = (p1 * v1) / v2;
+            
+            document.getElementById('boyleResult').innerHTML = 
+                `Hasil: P₂ = (${p1} × ${v1}) / ${v2} = ${p2.toFixed(2)} atm`;
+            
+            updateProgress(2, 50);
+        }
+
+        function calculateIdealGas() {
+            const P = parseFloat(document.getElementById('pressure').value);
+            const V = parseFloat(document.getElementById('volume').value);
+            const n = parseFloat(document.getElementById('moles').value);
+            const R = 0.082;
+            
+            const T = (P * V) / (n * R);
+            
+            document.getElementById('idealGasResult').innerHTML = 
+                `Hasil: T = (${P} × ${V}) / (${n} × ${R}) = ${T.toFixed(1)} K`;
+            
+            document.getElementById('temp').value = T.toFixed(1);
+            updateProgress(3, 50);
+        }
+
+        function checkAnswer(level, element, isCorrect) {
+            const options = element.parentNode.querySelectorAll('.quiz-option');
+            const resultDiv = document.getElementById(`result${level}`);
+            
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+                if (option === element) {
+                    option.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+            
+            if (isCorrect) {
+                resultDiv.innerHTML = '🎉 Benar! Made berhasil mengumpulkan partikel energi!';
+                resultDiv.className = 'result-message success';
+                completedQuestions[level - 1] = true;
+                updateProgress(level, 100);
+                
+                if (level < 3) {
+                    setTimeout(() => {
+                        resultDiv.innerHTML += '<br><button class="next-level-btn" onclick="startLevel(' + (level + 1) + ')">Lanjut ke Level ' + (level + 1) + ' →</button>';
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        resultDiv.innerHTML += '<br><button class="next-level-btn" onclick="showVictory()">Selesaikan Petualangan! 🏆</button>';
+                    }, 1000);
+                }
+            } else {
+                resultDiv.innerHTML = '❌ Belum tepat. Coba lagi dengan membaca materi lebih teliti!';
+                resultDiv.className = 'result-message error';
+                
+                setTimeout(() => {
+                    options.forEach(option => {
+                        option.style.pointerEvents = 'auto';
+                        option.classList.remove('correct', 'incorrect');
+                    });
+                    resultDiv.style.display = 'none';
+                }, 2000);
+            }
+            
+            resultDiv.style.display = 'block';
+        }
+
+        function showVictory() {
+            alert('🎉 Selamat! Made berhasil mengumpulkan semua partikel energi dan kembali ke dunianya!\n\nKamu telah menguasai:\n✅ Sifat-sifat Gas Ideal\n✅ Hukum-hukum Gas\n✅ Persamaan Gas Ideal (PV = nRT)\n\nTerima kasih telah bermain Kinetik Quest!');
+            backToMenu();
+        }
+
+        function showHint() {
+            const hints = [
+                'Selamat datang di Negeri Kinetik! Aku Prof. Molekul, pembimbingmu.',
+                'Level 1: Perhatikan bagaimana partikel gas bergerak secara acak dan tidak saling tarik-menarik.',
+                'Level 2: Ingat, jika tekanan naik maka volume turun (berbanding terbalik).',
+                'Level 3: Gunakan rumus PV = nRT dengan R = 0.082 L·atm/(mol·K).'
+            ];
+            
+            alert(hints[currentLevel] || hints[0]);
+        }
+
+        // Initialize first simulation when page loads
+        window.onload = function() {
+            // Page is ready
+        };
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9857a370e6d4c098',t:'MTc1ODk0MDg0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
