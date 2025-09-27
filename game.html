@@ -372,25 +372,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .professor-molekul {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, #64b5f6, #1976d2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: pulse 2s infinite;
-            z-index: 1000;
-        }
-
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -412,8 +393,7 @@
             pointer-events: none;
         }
 
-        .professor-molekul:hover .tooltip {
-            opacity: 1;
+    
         }
 
         @media (max-width: 768px) {
@@ -659,12 +639,6 @@
         </div>
     </div>
 
-    <!-- Professor Molekul Helper -->
-    <div class="professor-molekul" onclick="showHint()">
-        🔬
-        <div class="tooltip">Prof. Molekul - Klik untuk bantuan!</div>
-    </div>
-
     <script>
         let currentLevel = 0;
         let levelProgress = [0, 0, 0];
@@ -801,17 +775,7 @@
             backToMenu();
         }
 
-        function showHint() {
-            const hints = [
-                'Selamat datang di Negeri Kinetik! Aku Prof. Molekul, pembimbingmu.',
-                'Level 1: Perhatikan bagaimana partikel gas bergerak secara acak dan tidak saling tarik-menarik.',
-                'Level 2: Ingat, jika tekanan naik maka volume turun (berbanding terbalik).',
-                'Level 3: Gunakan rumus PV = nRT dengan R = 0.082 L·atm/(mol·K).'
-            ];
-            
-            alert(hints[currentLevel] || hints[0]);
-        }
-
+      
         // Initialize first simulation when page loads
         window.onload = function() {
             // Page is ready
